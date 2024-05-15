@@ -2,7 +2,7 @@
 
 **docker-compose.yml** <br>
 
-```
+```yml
 version: '3'
 services:
   zookeeper:
@@ -32,25 +32,24 @@ services:
 
 dependencies
 
-```
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka</artifactId>
-		</dependency>
+```xml
+<dependency>
+    <groupId>org.springframework.kafka</groupId>
+    <artifactId>spring-kafka</artifactId>
+</dependency>
 
-		<dependency>
-			<groupId>org.springframework.kafka</groupId>
-			<artifactId>spring-kafka-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		
+<dependency>
+    <groupId>org.springframework.kafka</groupId>
+    <artifactId>spring-kafka-test</artifactId>
+    <scope>test</scope>
+</dependency>
 ```
 
 ### Producer Application
 
 **application.properties**
 
-```
+```properties
 spring.kafka.topic.name=order_topics
 
 spring.kafka.consumer.bootstrap-servers=localhost:9092
@@ -68,7 +67,7 @@ spring.kafka.producer.value-serializer=org.springframework.kafka.support.seriali
 
 **KafkaTopicConfig.class**
 
-```
+```java
 @Configuration
 public class KafkaTopicConfig {
 
@@ -87,7 +86,7 @@ public class KafkaTopicConfig {
 > There should be a OrderEvent class to send message as an object
 
 
-```
+```java
 public class OrderEvent {
     private String message;
     private String status;
@@ -102,7 +101,7 @@ public class OrderEvent {
 We should pass OrderEvent object to sendMessage method, event is set as payload`.withPayload(event)`.<br>
 topic name is set as header `.setHeader(KafkaHeaders.TOPIC, topic.name())` 
 
-```
+```java
 @Service
 @Slf4j
 public class OrderProducer {
@@ -133,7 +132,7 @@ public class OrderProducer {
 OrderProducer is autowired to OrderService.class to send message
 
 
-```
+```java
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -163,7 +162,7 @@ consumer properties can be just deserializer, but I want to give deserializer an
  
 **application.properties**
 
-```
+```properties
 spring.kafka.topic.name=order_topics
 
 spring.kafka.consumer.bootstrap-servers=localhost:9092
@@ -183,7 +182,7 @@ spring.kafka.producer.value-serializer=org.springframework.kafka.support.seriali
 
 OrderConsumer is a service, `@KafkaListener` annotation should be used for consume method. OrderEvent should be passed to consume method.
 
-```
+```java
 @Service
 public class OrderConsumer {
 

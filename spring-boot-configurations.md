@@ -7,7 +7,7 @@ Spring boot docker-compose:
 
 
 POSTGRESQL
-```
+```yml
 version: '3.5'
 
 
@@ -31,7 +31,7 @@ volumes:
 ```
 
 MONGODB
-```
+```yml
 version: '3'
 services:
   myapplication:
@@ -58,7 +58,7 @@ services:
 Spring boot application properties:
 
 MYSQL
-```
+```properties
 spring.jpa.hibernate.ddl-auto=update
 spring.datasource.url=jdbc:mysql://${MYSQL_HOST:localhost}:3306/spring_jwt_db
 spring.datasource.username=root
@@ -68,7 +68,7 @@ spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
 ```
  
 POSTGRESQL
-```
+```properties
 spring.jpa.properties.hibernate.dialect = org.hibernate.dialect.PostgreSQLDialect
 spring.jpa.hibernate.ddl-auto=update
 spring.jpa.hibernate.show-sql=true
