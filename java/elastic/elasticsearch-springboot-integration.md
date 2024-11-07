@@ -5,7 +5,7 @@
 
 docker-compose.yml file:
 
-```
+```yml
   elasticsearch:
     image: elasticsearch:8.8.0
     ports:
@@ -21,7 +21,7 @@ docker-compose.yml file:
 
 dependency:
 
-```
+```xml
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-elasticsearch</artifactId>
@@ -44,7 +44,7 @@ dependency:
 
 ElasticSearchConfig.java:
 
-```
+```java
 @Configuration
 @EnableElasticsearchRepositories(basePackages = "com.example.shoppingcart.repository.es")
 public class ElasticSearchConfig {
@@ -74,7 +74,7 @@ public class ElasticSearchConfig {
 
 > Model class will be implemented as:
 
-```
+```java
 @Data
 @Builder
 @AllArgsConstructor
@@ -98,10 +98,8 @@ public class CartEs {
 
 > Repository interface class will be implemented as:
 
-```
+```java
 @Repository
 public interface CartEsRepository extends ElasticsearchRepository<CartEs, String> {
 }
-
 ```
-
