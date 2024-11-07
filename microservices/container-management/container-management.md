@@ -1,0 +1,2 @@
+# Container management
+Microservice are packaged as images, and each of them is deployed as container. Containers encapsulates the microservices so that they can be managed independent from deployment environment. Docker is the de facto container management system.
