@@ -135,3 +135,65 @@ test class
 
 
 ```
+
+## Custom mapping
+
+model class :
+```java
+@Data
+public class Order {
+    private Long id;
+    private String customerName;
+    private String productName;
+    private Double price;
+    private LocalDate orderDate;
+}
+```
+
+dto / response class :
+
+```java
+@Data
+public class OrderResponse {
+    private String clientName;
+    private String productName;
+    private String formattedPrice;
+    private String purchaseDate;
+}
+```
+
+mapper interface
+```java
+@Mapper
+public interface OrderMapper {
+    OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
+
+    @Mapping(target = "clientName", source = "order.customerName") //if field names are different
+    @Mapping(target = "purchaseDate", source = "order.orderDate", dateFormat = "dd-MM-yyyy") //if field names are different
+    @Mapping(target = "formattedPrice", expression = "java(formatPrice(order.getPrice()))") //calling formatPrice() method
+    OrderResponse orderToOrderResponse(Order order);
+
+    default String formatPrice(Double price) {
+        return price == null ? null : "$" + String.format("%.2f", price);
+    }
+}
+```
+
+service class :
+
+```java
+@Service
+public class OrderService {
+
+    public OrderResponse getOrderResponse() {
+        Order order = new Order();
+        order.setId(1L);
+        order.setCustomerName("Alice Johnson");
+        order.setProductName("Smartphone");
+        order.setPrice(850.75);
+        order.setOrderDate(LocalDate.of(2024, 11, 18));
+
+        return OrderMapper.INSTANCE.orderToOrderResponse(order);
+    }
+}
+```
