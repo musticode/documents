@@ -1,5 +1,7 @@
 
-# OCPP 1.6 - Operations Initiated by Charge Point
+# OCPP 1.6 Operations
+
+## OCPP 1.6 - Operations Initiated by Charge Point
 
 **Request and responses :** https://github.com/gennadiygnezdilov/ocpp-1.6J-example-request-response/tree/main
 
@@ -185,4 +187,56 @@ Response :
 ```
 
 ### Start Transaction
-- 
+
+- Şarj Noktası, başlatılan bir işlem hakkında bilgi vermek için Merkezi Sisteme bir StartTransaction.req PDU göndermelidir. Bu işlem bir rezervasyonu sonlandırırsa (Şimdi Rezervasyon Yap işlemine bakın), StartTransaction.req, reservationId'yi içermelidir.
+Bir StartTransaction.req PDU alındığında, Merkezi Sistem bir StartTransaction.conf PDU ile yanıt vermelidir. Bu yanıt PDU'su bir işlem kimliği ve bir yetkilendirme durumu değeri içermelidir.
+- Merkezi Sistem, StartTransaction.req PDU'sundaki tanımlayıcının geçerliliğini doğrulamalıdır çünkü tanımlayıcı, güncel olmayan bilgiler kullanılarak Şarj Noktası tarafından yerel olarak yetkilendirilmiş olabilir. Örneğin, tanımlayıcı, Şarj Noktasının Yetkilendirme Önbelleğine eklendiğinden beri engellenmiş olabilir.
+- Charge Point bir Yetkilendirme Önbelleği uyguladıysa, bir StartTransaction.conf PDU alındığında, idTag Yerel Yetkilendirme Listesinde değilse, Yetkilendirme Önbelleği altında açıklandığı gibi yanıttaki IdTagInfo değeriyle Charge Point önbellek girişini GÜNCELLEYECEKTİR.
+- Merkezi Sistemin aldığı bir StartTransaction.req'te bulunan verilere mantık kontrolleri uygulaması muhtemeldir. Bu tür mantık kontrollerinin sonucu, Merkezi Sistemin bir StartTransaction.conf ile yanıt vermemesine ASLA neden OLMAMALIDIR. Bir StartTransaction.conf ile yanıt vermemek, Charge Point'in yalnızca İşlemle ilgili mesajlara verilen Hata yanıtlarında belirtildiği gibi aynı mesajı tekrar denemesine neden olur.
+  
+### Status Notification
+
+- Bir Şarj Noktası, Şarj Noktası içindeki bir durum değişikliği veya hata hakkında Merkezi Sistem'i bilgilendirmek için Merkezi Sistem'e bir bildirim gönderir. Aşağıdaki tablo, bir Şarj Noktası'nın Merkezi Sistem'e bir StatusNotification.req PDU gönderebileceği önceki bir durumdan (sol sütun) yeni bir duruma (üst sıra) geçişleri göstermektedir.
+  
+> The Occupied state as defined in previous OCPP versions is no longer relevant. The Occupied state is split into five new statuses: Preparing, Charging, SuspendedEV, Suspended EVSE and Finishing.
+
+#### Table Notes
+
+> A Charge Point Connector MAY have any of the 9 statuses as shown in the table above. For ConnectorId 0, only a limited set is applicable, namely: Available, Unavailable and Faulted. The status of ConnectorId 0 has no direct connection to the status of the individual Connectors (>0).
+
+> If charging is suspended both by the EV and the EVSE, status SuspendedEVSE SHALL have precedence over status SuspendedEV.
+
+> When a Charge Point or a Connector is set to status Unavailable by a Change Availability command, the 'Unavailable' status MUST be persistent across reboots. The Charge Point MAY use the Unavailable status internally for other purposes (e.g. while updating firmware or waiting for an initial Accepted RegistrationStatus).
+
+- Occupied durumu beş yeni duruma bölündüğünden (Hazırlanıyor, Şarj Ediliyor, Askıya Alınmış EV, Askıya Alınmış EVSE ve Bitiriliyor), Şarj Noktasından Merkezi Sisteme daha fazla StatusNotification.req PDU gönderilecektir. Örneğin, bir işlem başlatıldığında, Bağlayıcı durumu, muhtemelen birkaç saniye içinde, arada kısa bir Askıya Alınmış EV ve/veya "Askıya Alınmış EVSE" ile sırasıyla Hazırlanıyor'dan Şarj Ediliyor'a değişecektir.
+- Geçiş sayısını sınırlamak için, Şarj Noktası, isteğe bağlı yapılandırma anahtarı MinimumStatusDuration'da tanımlanandan daha az süre aktifse bir StatusNotification.req göndermeyi atlayabilir. Bu şekilde, bir Şarj Noktası belirli StatusNotification.req PDU'larını göndermemeyi seçebilir.
+- Şarj Noktası, Merkezi Sistem'e arıza koşullarını bildirmek için bir StatusNotification.req PDU gönderebilir. 'status' alanı Arızalı olmadığında, şarj işlemleri hala mümkün olduğundan durum bir uyarı olarak değerlendirilmelidir.
+- Bir Şarj Noktası, EV tarafı bağlantısı kesildiğinde StopTransaction false olarak ayarlandığında, bir işlem çalışıyor ve EV StopTransactionOnEVSideDisconnect oluyor, ardından SuspendedEV durumuyla bir StatusNotification.req Merkezi Sisteme gönderilmeli ve 'errorCode' alanı 'NoError' olarak ayarlanmalıdır. Şarj Noktası 'info' alanına ek bilgi eklemeli ve Merkezi Sisteme askıya alma nedenini bildirmelidir: 'EV tarafı bağlantısı kesildi'. Mevcut işlem durdurulmaz.
+- Bir Şarj Noktası StopTransactionOnEVSideDisconnect true olarak ayarlandığında, bir işlem çalışıyor ve EV EV tarafında bağlantısı kesiliyorsa, o zaman 'Finishing' durumu olan bir StatusNotification.req Merkezi Sisteme gönderilmeli ve 'errorCode' alanı 'NoError' olarak ayarlanmalıdır. Şarj Noktası 'info' alanına ek bilgi eklemeli ve Merkezi Sisteme durma nedenini bildirmelidir: 'EV tarafı bağlantısı kesildi'. Mevcut işlem durdurulur.
+- Bir Şarj Noktası çevrimdışı olduktan sonra Merkezi Sisteme bağlandığında, Merkezi Sistemi aşağıdaki kurallara göre durumu hakkında günceller:
+  1. Şarj Noktası, Şarj Noktası çevrimdışıyken durum değişirse, mevcut durumuyla birlikte bir StatusNotification.req PDU göndermelidir.
+  2. Şarj Noktası, Şarj Noktası çevrimdışıyken meydana gelen bir hatayı bildirmek için bir StatusNotification.req PDU gönderebilir.
+  3. Şarj Noktası, Şarj Noktası çevrimdışıyken meydana gelen ve Şarj Noktası hataları veya Şarj Noktasının mevcut durumu hakkında Merkezi Sistemi bilgilendirmeyen geçmiş durum değişikliği olayları için StatusNotification.req PDU'ları göndermemelidir.
+  4. StatusNotification.req mesajları, açıkladıkları olayların meydana geldiği sırayla gönderilmelidir. 
+- StatusNotification.req PDU'sunun alınması üzerine, Merkezi Sistem bir StatusNotification.conf PDU'su ile yanıt VERMELİDİR.
+
+### Stop Transaction
+- Bir işlem durdurulduğunda, Şarj Noktası, işlemin durdurulduğunu Merkezi Sisteme bildiren bir StopTransaction.req PDU göndermelidir.
+- Bir StopTransaction.req PDU, işlem kullanımı hakkında daha fazla ayrıntı sağlamak için isteğe bağlı bir TransactionData öğesi içerebilir. İsteğe bağlı TransactionData öğesi, MeterValues.req PDU'sunun meterValue öğeleriyle aynı veri yapısını kullanan herhangi bir sayıda MeterValues ​​için bir kapsayıcıdır (bkz. MeterValues ​​bölümü)
+- Stop Transaction.request PDU'su alındığında, Merkezi Sistem bir Stop Transaction.conf PDU'su ile yanıt VERMELİDİR.
+
+> The Central System cannot prevent a transaction from stopping. It MAY only inform the Charge Point it has received the StopTransaction.req and MAY send information about the idTag used to stop the transaction. This information SHOULD be used to update the Authorization Cache, if implemented.
+
+- İstek PDU'sundaki idTag, Şarj Noktasının işlemi durdurması gerektiğinde atlanabilir. Örneğin, Şarj Noktasının sıfırlanması istendiğinde.
+- Bir işlem normal şekilde sonlandırılırsa (örneğin, EV sürücüsü işlemi durdurmak için kimliğini sunarsa), Neden öğesi atlanabilir ve Neden 'Yerel' olarak kabul edilmelidir. İşlem normal şekilde sonlandırılmazsa, Neden doğru bir değere ayarlanmalıdır. Normal işlem sonlandırma işleminin bir parçası olarak, Şarj Noktası kabloyu (kalıcı olarak bağlı değilse) açmalıdır.
+- Şarj Noktası, kablo EV'de bağlantısı kesildiğinde kabloyu (kalıcı olarak bağlı değilse) açabilir. Destekleniyorsa, bu işlevsellik UnlockConnectorOnEVSideDisconnect yapılandırma anahtarı tarafından bildirilir ve kontrol edilir.
+- Şarj Noktası, kablo EV'de bağlantısı kesildiğinde çalışan bir işlemi DURDURABİLİR. Destekleniyorsa, bu işlevsellik StopTransactionOnEVSideDisconnect yapılandırma anahtarı tarafından bildirilir ve kontrol edilir.
+- StopTransactionOnEVSideDisconnect false olarak ayarlanırsa, kablo EV'den bağlantısı kesildiğinde işlem DURDURULMAMALIDIR. EV yeniden bağlanırsa, enerji transferine tekrar izin verilir. Bu durumda, aynı devam eden işlem sırasında diğer EV'lerin şarj olmasını ve bağlantısını kesmesini önleyecek bir mekanizma yoktur. UnlockConnectorOnEVSideDisconnect false olarak ayarlandığında, kullanıcı tanımlayıcıyı sunana kadar Bağlayıcı Şarj Noktasında kilitli KALIR.
+- StopTransactionOnEVSideDisconnect true olarak ayarlandığında, kablo EV'den bağlantısı kesildiğinde işlem DURDURULMALIDIR. EV yeniden bağlanırsa, işlem durdurulana ve yeni bir işlem başlatılana kadar enerji transferine izin verilmez. UnlockConnectorOnEVSideDisconnect true olarak ayarlanırsa, Şarj Noktasındaki Bağlayıcı da kilidi açılır.
+> - StopTransactionOnEVSideDisconnect false olarak ayarlanırsa, bu, UnlockConnectorOnEVSideDisconnect'e göre öncelikli OLACAKTIR. Başka bir deyişle: StopTransactionOnEVSideDisconnect false olduğunda, kablolar EV tarafında bağlantısı kesildiğinde her zaman kilitli kalır.
+> - StopTransactionOnEVSideDisconnect'i true olarak ayarlamak, EV tarafındaki kilitli olmayan kabloları çıkararak enerji akışını durdurmaya yönelik sabotaj eylemlerini önleyecektir.
+- Merkezi Sistemin aldığı bir StopTransaction.req'te bulunan verilere mantık kontrolleri uygulaması muhtemeldir. Bu tür mantık kontrollerinin sonucu ASLA Merkezi Sistemin bir StopTransaction.conf ile yanıt vermemesine neden OLMAMALIDIR. Bir StopTransaction.conf ile yanıt vermemek yalnızca Şarj Noktasının işlemle ilgili mesajlara verilen Hata yanıtlarında belirtildiği gibi aynı mesajı tekrar denemesine neden olur.
+- Şarj Noktası bir Yetkilendirme Önbelleği uyguladıysa, bir StopTransaction.conf PDU'su alındığında Şarj Noktası, idTag Yerel Yetkilendirme Listesinde değilse, Yetkilendirme Önbelleği altında açıklandığı gibi yanıttaki IdTagInfo değeriyle önbellek girişini GÜNCELLEYECEKTİR.
+
+
+## OCPP 1.6 - Operations Initiated by Central System
