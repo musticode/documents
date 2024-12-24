@@ -240,3 +240,21 @@ Bir StartTransaction.req PDU alındığında, Merkezi Sistem bir StartTransactio
 
 
 ## OCPP 1.6 - Operations Initiated by Central System
+
+
+## Meter Value Details
+
+- Charging Session Meter Values
+Also called “sampled meter data”, charging session meter values are measured and sent in specific intervals (e.g., 1 minute) from the charge point to the CMS. These meter values are only sent during a charging session and offer “real-time” measurement.‍
+- Clock-Aligned Meter Values
+Clock-aligned meter values are measured, sent regularly, and aligned with a specific clock time. For example, the charge point may send meter values every 15 minutes, even without an active charging session. This data might be relevant for the grid operator. These values are typically not considered to be real-time values.
+
+sampledValue:
+
+- Value: This is the actual meter value that was measured. In the case of 20 kW, this file will show “20”. Be careful however, as OCPP requires a String format.
+- Context: Here, OCPP differentiates whether the meter value is clock aligned “Sample.Clock”, session-related meter value “sample.Periodic, or any other type.
+- Format: As OCPP sends the value as String, this format field specifies the format of that particular value. “Raw” refers to either an integer or decimal value and “SignedData” refers to an encoded data block. “Raw” is more typical.
+- Measurand: Refers to the type of measurement. In other words, it tells us what type of value we are receiving. Typically, charge points send energy (“Energy.Active.Import.Interva”), power (“Power.Active.Import”), and current (“Current.Import”). OCPP specifies over 22 measurands. This is why sampledValue can contain several measurands per message.
+- Phase: Refers to the electrical phase where the charge point measured the data point. Either the measurand was taken at a specific phase (e.g. “L1”), between phases (e.g. “L1-L2”), or independent for any phase. Especially for energy related measurands (voltage, current, etc.) this becomes important.
+- Location: Not every meter value is measured at the same location. Therefore, the OCPP message specifies the exact location, such as “Cable”, “Inlet”, or “Body”.
+- Unit: As the Value field doesn’t give us any information about the unit, OCPP has this separate unit field. Each measurand can have different values. Energy can have “kWh” or “Wh”. OCPP specified over 16 unit types including Percentage, Ampere, Celsius, Power, and more.
