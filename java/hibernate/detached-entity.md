@@ -25,3 +25,6 @@ Therefore you get the exception "detached entity passed to persist". The Account
 ## Solution 2
 
 Removing child association cascading
+
+
+- https://stackoverflow.com/questions/13370221/persistentobjectexception-detached-entity-passed-to-persist-thrown-by-jpa-and-h
