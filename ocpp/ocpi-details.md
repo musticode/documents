@@ -17,3 +17,19 @@ Sonuç
 - Roaming ve OCPI, elektrikli araçların şarj edilmesi için kritik öneme sahip olan iki kilit bileşendir. Özetle Roaming, kullanıcıların farklı şarj ağları arasında hareket etmelerini sağlar, OCPI ise bu hareketliliği kolaylaştırmak için standart bir iletişim protokolü sağlar. Bu sayede, elektrikli araç sahipleri daha geniş bir şarj altyapısıyla seyahat ederken daha fazla esneklik ve kullanım kolaylığı elde eder.
 
 - Elektrikli araç pazarı büyüdükçe, Roaming ve OCPI gibi altyapılar da daha da önemli olacak. Böylece birlikte yeşil bir geleceğin inşa etmede kritik bir rol oynayacak.
+
+https://www.linkedin.com/pulse/seamless-ev-charging-roaming-exploring-ocpi-protocol-fedotov/
+
+### JAVA Implementation
+
+Extrawest-OCPI-2.2.1
+
+Version supported: OCPI 2.2.1
+
+Last updated: June 2023
+
+The technology used: Java (Spring Boot)
+
+Proudly brought to you by Extrawest, the Extrawest-OCPI-2.2.1 library is a Java-based implementation of the OCPI 2.2.1 protocol. It provides a set of Java classes and methods that enable developers to build OCPI-compatible applications in the Java programming language. Implementing all the endpoints needed for the connection between different EV charging market players, the library can easily cut your OCPI implementation time in 2. 
+
+You can find the library on GitHub: https://github.com/extrawest/Extrawest-OCPI-2.2.1 
