@@ -123,6 +123,34 @@ public class User implements UserDetails {
 ```
 used for authorities
 
+
+- Role entity : Enumerated
+  
+```java
+public enum Role implements GrantedAuthority {
+
+    USER("USER"),
+    ADMIN("ADMIN");
+
+    private String value;
+    
+    Role(String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return this.value;
+    }
+
+    @Override
+    public String getAuthority() {
+        return name();
+    }
+
+}
+```
+
+
 #### Services
 
 - JWT Service 
@@ -322,7 +350,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 - Security Config
 
 ```java
-Configuration
+@Configuration
 @EnableWebSecurity
 public class SecurityConfig{
 
