@@ -15,7 +15,7 @@ gibi geliştirmelerin tamamından biz sorumluyuz.
 
 İlk önce token oluşturma, validate etme, imzalama gibi işlemleri yapabilmek için 
 
-```
+```xml
     <dependency>
 		<groupId>io.jsonwebtoken</groupId>
 		<artifactId>jjwt</artifactId>
@@ -25,7 +25,7 @@ gibi geliştirmelerin tamamından biz sorumluyuz.
 
 kütüphanesini **pom.xml'e** ekliyoruz. Ve bunu kullanabilmek için
 
-```
+```java
     @Component
     public class JWTTokenUtil implements Serializable {
     	private static final long serialVersionUID = -2550185165626007488L;
@@ -71,7 +71,7 @@ kütüphanesini **pom.xml'e** ekliyoruz. Ve bunu kullanabilmek için
 
 Bu adımdan sonra her istekte **JWT** token'i kontrol edecek **filter** sınıfımızı geliştiriyoruz.
 
-```
+```java
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
 	@Autowired
@@ -113,7 +113,7 @@ Burada gördüğünüz gibi token alınıp decode ediliyor. Daha sonra **JwtToke
 
 Bu adımdan sonra bir **Configuration** sınıfı ile artık spring'e **JWT** için yaptığım konfigürasyonları kullan diyebilmekteyim.
 
-```
+```java
     @Configuration
     @EnableWebSecurity
     public class JWTSecurityConfig extends WebSecurityConfigurerAdapter{
@@ -148,7 +148,7 @@ Burada **userDetailServis** bizim **JDBC** servisimiz olarak ayarlanıyor. Daha 
 
 Ve son olarakta kullanıcının login olabileceği bir action geliştiriyoruz. (**LoginRequest** sınıfını yazmıyorum artık oralarda master durumdasınız)
 
-```
+```java
 @RestController
 public class LoginController {
 	@Autowired
@@ -182,7 +182,7 @@ Burada **AuthenticationManager** ile kullanıcı authentication akışından ge�
 Bu aşamadan sonra kullanıcı bir istek yaparken request'e **AUTHORIZATION : Bearer [aldığı token]** şeklinde authorization headerine'da eklerse kullanıcı tanıma işlemleri başarılı bir şekilde yapılabilmektedir.
 
 Son olarak **/login** isteğine herkesin token'sız yani authenticate olmadan gelebilmesi için(**zaten authenticate olmak için buraya geliyorum burda authenticate kontrolu yapmamalıdır spring**) security configurationunda şu şekilde
-```
+```java
     @Override
 	protected void configure(HttpSecurity httpSecurity) throws Exception {
 		httpSecurity
@@ -200,7 +200,7 @@ Son olarak **/login** isteğine herkesin token'sız yani authenticate olmadan ge
 
 Arkadaşlar kodun herhangi bir yerinde o an işlemi yapan; yani authenticate olmuş user bilgisine ihtiyacımız olabilir. Mesela kullanıcının hesaplarını getirmek için kullanıcının id'sine ihtiyacımız vardır. Bu gibi durumlarda istediğiniz herhangi bir yerde(Tüm authentication typeları içni aynıdır bu)
 
-```
+```java
     User authUser = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 ```
 şeklinde çağırım yaparak **org.springframework.security.core.userdetails.User** sınıfı tipinden authenticated userınızı alabilirsiniz.
