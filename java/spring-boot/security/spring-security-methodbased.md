@@ -111,3 +111,65 @@ public String getMyRoles(String username) {
 ```
 
 > [Spring Method Security](https://www.baeldung.com/spring-security-method-security)
+
+## Method based 2
+
+**@Secured Annotation**
+
+The @Secured annotation is used to specify a list of roles that are allowed to access a particular method. 
+
+```java
+@Secured("ROLE_ADMIN") 
+public void deleteUser(int userId) { 
+// Method logic here 
+}
+```
+
+**@PreAuthorize Annotation**
+
+The @PreAuthorize annotation is used to specify more complex security constraints using SpEL (Spring Expression Language). 
+
+```java
+@PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_USER') and #userId == principal.userId)") 
+public void updateUser(int userId) { 
+// Method logic here 
+}
+````
+
+This annotation allows only users with the ROLE_ADMIN role or users with the ROLE_USER role and the same userId as the principal(the currently authenticated user) to access the updateUser() method. By default, method-level securitty is not enabled in spring security. To enable it, developers need to add the <global-method-security> element to the spring security configuration file and set the pre-post annotations attribute to "enabled".
+
+In summary, method level security in spring security allows develoopers to apply security constraints to specific methods within a class, rather than applying them to the entire class or application. This feature is implemented using the @Secured and @PreAuthorize annotations and is more fine-grained control over access to specific parts of the application.
+
+```xml
+<dependency>
+   <groupId>org.springframework.boot</groupId>
+   <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+```
+
+```java
+@Configuration
+@EnableGlobalMethodSecurity(prePostEnabled = true) 
+public class SecurityConfig extends WebSecurityConfigurerAdapter { 
+// Other security configurations here 
+}
+```
+
+```java
+@Service
+public class UserService { 
+	
+    @PreAuthorize("hasRole('ROLE_ADMIN')") 
+    public void deleteUser(int userId) { 
+    // Method logic here 
+    } 
+        
+    @PreAuthorize("hasRole('ROLE_USER') and #userId == principal.userId") 
+    public void updateUser(int userId) { 
+    // Method logic here 
+    } 
+	
+}
+```
+
+Similarly, in this example as well, the deleteUser() method can only be accessed by users with the ‘ROLE_ADMIN’ role, while the updateUser() method can only be accessed by users with the ‘ROLE_USER’ role.
