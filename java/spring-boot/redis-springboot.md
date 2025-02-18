@@ -3,6 +3,7 @@
 
 docker-compose.yml
 
+```yml
     version: '3.8'  
     services:  
       cache:  
@@ -16,45 +17,50 @@ docker-compose.yml
     volumes:  
       cache:  
         driver: local
+```
 
 pom.xml dependencies:
 
-     <dependency>  
-       <groupId>org.springframework.boot</groupId>  
-       <artifactId>spring-boot-starter-data-redis</artifactId>  
-      </dependency>
+```xml
+<dependency>  
+  <groupId>org.springframework.boot</groupId>  
+  <artifactId>spring-boot-starter-data-redis</artifactId>  
+</dependency>
+```
 
 SpringBoot application.properties file:
-
+```
     redis.host=localhost  
     redis.port=6379
+```
 
 RedisConfiguration class:
 
   
-
-    @Configuration  
-    @EnableCaching  
-    public class RedisConfiguration {  
-      
-        @Value("${redis.host}")  
-        private String redisHost;  
-      
-        @Value("${redis.port}")  
-        private int redisPort;  
-      
-        @Bean  
-        public LettuceConnectionFactory redisConnectionFactory() {  
-            RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, redisPort);  
-            return new LettuceConnectionFactory(configuration);  
-        }  
-      
-        @Bean  
-        public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {  
-            return RedisCacheManager.create(connectionFactory);  
-        }  
-      
-    }
+```java
+@Configuration  
+@EnableCaching  
+public class RedisConfiguration {  
+  
+    @Value("${redis.host}")  
+    private String redisHost;  
+  
+    @Value("${redis.port}")  
+    private int redisPort;  
+  
+    @Bean  
+    public LettuceConnectionFactory redisConnectionFactory() {  
+        RedisStandaloneConfiguration configuration = new RedisStandaloneConfiguration(redisHost, redisPort);  
+        return new LettuceConnectionFactory(configuration);  
+    }  
+  
+    @Bean  
+    public RedisCacheManager cacheManager(RedisConnectionFactory connectionFactory) {  
+        return RedisCacheManager.create(connectionFactory);  
+    }  
+  
+}
+```
 
 After configurations are set, simple CRUD implementation is done below
 
@@ -90,6 +96,7 @@ cached
 
 Additionally, update cache and delete cache variables
 
+```
     @CachePut(value = "book", key = "#bookId")  
     public Book updateBook(long bookId, Book book) {  
       //update codes  
@@ -100,3 +107,4 @@ Additionally, update cache and delete cache variables
     public long deleteBook(long bookId) {  
       //delete codes  
     }
+```
