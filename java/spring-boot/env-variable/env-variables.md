@@ -27,4 +27,3 @@ spring.r2dbc.url=r2dbc:postgresql://${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES
 ```
 
 env variable usage : https://www.surly.dev/articles/how-to-use-env-files-with-spring-boot
-

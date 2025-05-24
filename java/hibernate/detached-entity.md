@@ -27,4 +27,6 @@ Therefore you get the exception "detached entity passed to persist". The Account
 Removing child association cascading
 
 
-- https://stackoverflow.com/questions/13370221/persistentobjectexception-detached-entity-passed-to-persist-thrown-by-jpa-and-h
+* https://stackoverflow.com/questions/13370221/persistentobjectexception-detached-entity-passed-to-persist-thrown-by-jpa-and-h
+
+
