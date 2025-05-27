@@ -59,9 +59,9 @@ public class RedisMessagingService {
 
 
 <<<<<<< HEAD
+
 * <https://github.com/math-boy11/yt-redis-pubsub-demo-spring-boot/blob/main/src/main/java/com/mathboy11/RedisMessagingService.java>
-* <https://www.youtube.com/watch?v=bSe_JBSk5w4&ab_channel=Theo%27sTechTips>
+* [https://www.youtube.com/watch?v=bSe_JBSk5w4&ab_channel=Theo'sTechTips](https://www.youtube.com/watch?v=bSe_JBSk5w4&ab_channel=Theo%27sTechTips)
 
 
-=======
->>>>>>> 3af173d48559c35639b6bc82956e1ce2189bd5b3
+
