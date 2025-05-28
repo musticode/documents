@@ -64,4 +64,6 @@ public class RedisMessagingService {
 * [https://www.youtube.com/watch?v=bSe_JBSk5w4&ab_channel=Theo'sTechTips](https://www.youtube.com/watch?v=bSe_JBSk5w4&ab_channel=Theo%27sTechTips)
 
 
+## Example tutorial 2
 
+<https://howtodoinjava.com/spring-data/redis-pub-sub-with-spring-boot/>
