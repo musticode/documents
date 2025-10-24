@@ -205,7 +205,3 @@ This repository contains free resources to learn System Design concepts and prep
 - [The Chubby lock service for loosely-coupled distributed systems](https://static.googleusercontent.com/media/research.google.com/en//archive/chubby-osdi06.pdf)
 
 ---
-
-<p align="center">
-<i>If you find this resource helpful, please give it a star ⭐️ and share it with others!</i>
-</p>
